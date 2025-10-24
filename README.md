@@ -1,10 +1,12 @@
 # 🚀 Projeto PRP Live - Sistema CI/CD Reutilizável
 
-[![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)
-[![Java](https://img.shields.io/badge/Java-17%2B-007396?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![CI/CD Pipeline](https://github.com/AlexCajeFelix/Aprendendo-CI/actions/workflows/main.yml/badge.svg)](https://github.com/AlexCajeFelix/Aprendendo-CI/actions/workflows/main.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AlexCajeFelix_Aprendendo-CI&metric=alert_status)](https://sonarcloud.io/dashboard?id=AlexCajeFelix_Aprendendo-CI)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=AlexCajeFelix_Aprendendo-CI&metric=coverage)](https://sonarcloud.io/dashboard?id=AlexCajeFelix_Aprendendo-CI)
+[![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Maven](https://img.shields.io/badge/Maven-3.9%2B-C71A36?logo=apache-maven&logoColor=white)](https://maven.apache.org/)
-[![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![SonarCloud](https://img.shields.io/badge/SonarCloud-Quality-orange?logo=sonarcloud&logoColor=white)](https://sonarcloud.io/)
+[![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/alexcaje/aprendendo-ci)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-6DB33F?logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
 
 ## 📋 Sobre o Projeto
 
