@@ -7,7 +7,6 @@ WORKDIR /app
 
 # Copy dependency definition files first (for caching)
 COPY pom.xml .
-COPY .mvn .mvn
 
 # Download dependencies (cached layer)
 RUN mvn dependency:go-offline -B

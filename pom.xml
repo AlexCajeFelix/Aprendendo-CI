@@ -18,15 +18,9 @@
     <name>Demo CI/CD</name>
     <description>Demo project for CI/CD with Spring Boot</description>
 
-    <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.organization>alexcajefelix</sonar.organization>
-        <sonar.projectKey>AlexCajeFelix_Aprendendo-CI</sonar.projectKey>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    </properties>
+ <properties>
+  <sonar.organization>alexcajefelix</sonar.organization>
+</properties>
 
     <dependencies>
         <!-- Spring Boot Web -->

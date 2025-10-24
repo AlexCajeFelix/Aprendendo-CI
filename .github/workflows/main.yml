@@ -27,6 +27,11 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 env:
   JAVA_VERSION: '21'
   MAVEN_OPTS: '-Xmx3072m'
