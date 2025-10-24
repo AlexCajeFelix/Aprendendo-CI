@@ -59,10 +59,10 @@ jobs:
         with:
           fetch-depth: 0  # Full history for better analysis
       
-      - name: ☕ Set up JDK 17
+      - name: ☕ Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
       
@@ -71,25 +71,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          if [ -z "$SONAR_TOKEN" ]; then
-            echo "⚠️  SONAR_TOKEN not configured. Skipping SonarCloud analysis."
-            echo "ℹ️  Configure it in: Repository Settings → Secrets and variables → Actions"
-            exit 0
-          fi
-          
           echo "🔍 Running SonarCloud analysis..."
-          mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} \
-            -Dsonar.organization=${{ github.repository_owner }} \
+          mvn sonar:sonar \
+            -Dsonar.projectKey=AlexCajeFelix_Aprendendo-CI \
+            -Dsonar.organization=alexcajefelix \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=$SONAR_TOKEN \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
       
       - name: ✅ Quality Gate Check
-        if: env.SONAR_TOKEN != ''
         run: |
           echo "✅ SonarCloud analysis completed"
-          echo "📊 View results: https://sonarcloud.io/dashboard?id=${{ github.repository_owner }}_${{ github.event.repository.name }}"
+          echo "📊 View results: https://sonarcloud.io/dashboard?id=AlexCajeFelix_Aprendendo-CI"
   
   # ============================================
   # JOB 3: Security Scan
@@ -201,11 +193,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/aprendendo-ci
           tags: |
             type=raw,value=latest
-            type=sha,prefix={{branch}}-
-            type=semver,pattern={{version}},value=${{ needs.build-and-test.outputs.jar-version }}
+            type=sha,prefix=main-
+            type=raw,value=${{ needs.build-and-test.outputs.jar-version }}
       
       - name: 🚀 Build and Push Docker image
         uses: docker/build-push-action@v5
@@ -260,9 +252,9 @@ jobs:
           
           ## Quick Links
           
-          - 📊 [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=${{ github.repository_owner }}_${{ github.event.repository.name }})
+          - 📊 [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=AlexCajeFelix_Aprendendo-CI)
           - 🔒 [Security Alerts](https://github.com/${{ github.repository }}/security/code-scanning)
-          - 🐳 [DockerHub Repository](https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }})
+          - 🐳 [DockerHub Repository](https://hub.docker.com/r/alexcaje/aprendendo-ci)
           
           ---
           ⏱️ Pipeline completed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
