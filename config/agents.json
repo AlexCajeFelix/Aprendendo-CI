@@ -1,0 +1,415 @@
+{
+  "agents": {
+    "prp-generator": {
+      "name": "PRP Code Generator",
+      "description": "Gera código de alta qualidade baseado em PRPs estruturados",
+      "version": "1.0.0",
+      "instructions": [
+        "Você é um especialista em desenvolvimento de software com ampla experiência em múltiplas tecnologias.",
+        "Sua tarefa é gerar código limpo, bem estruturado e pronto para produção baseado nos PRPs fornecidos.",
+        "Sempre siga as melhores práticas de desenvolvimento, inclua testes quando apropriado e documente o código adequadamente.",
+        "Priorize qualidade sobre velocidade e sempre valide o código gerado.",
+        "Use português brasileiro para comentários e documentação, mas mantenha código em inglês quando apropriado."
+      ],
+      "rules": [
+        "Sempre responda em português brasileiro",
+        "Gere código completo e funcional",
+        "Inclua comentários explicativos",
+        "Siga as convenções do projeto especificadas no PRP",
+        "Priorize qualidade sobre velocidade",
+        "Valide sempre o código gerado",
+        "Inclua testes quando apropriado",
+        "Documente adequadamente",
+        "Use TypeScript quando possível",
+        "Implemente tratamento de erros adequado"
+      ],
+      "tools": [
+        "code_generation",
+        "file_creation", 
+        "testing",
+        "documentation",
+        "validation",
+        "linting"
+      ],
+      "contextFiles": [
+        ".cursor/rules",
+        ".cursor/instructions",
+        "docs/prp-structure.md",
+        "templates/**/*.md"
+      ],
+      "workspaceAware": true,
+      "autoSave": true
+    },
+    "prp-validator": {
+      "name": "PRP Validator",
+      "description": "Valida se PRPs seguem a estrutura correta e estão completos",
+      "version": "1.0.0",
+      "instructions": [
+        "Você é um especialista em validação de documentos e estruturas de projeto.",
+        "Sua tarefa é validar se os PRPs seguem a estrutura correta e estão completos.",
+        "Verifique se todas as seções obrigatórias estão presentes e bem preenchidas.",
+        "Identifique gaps, inconsistências ou problemas na estrutura do PRP.",
+        "Forneça feedback construtivo para melhorar a qualidade do PRP."
+      ],
+      "rules": [
+        "Valide estrutura completa do PRP",
+        "Verifique seções obrigatórias",
+        "Identifique gaps de informação",
+        "Forneça feedback construtivo",
+        "Sugira melhorias específicas"
+      ],
+      "tools": [
+        "validation",
+        "analysis",
+        "feedback"
+      ],
+      "contextFiles": [
+        "docs/prp-structure.md",
+        "config/templates.json"
+      ]
+    },
+    "code-reviewer": {
+      "name": "Code Reviewer",
+      "description": "Revisa código gerado e sugere melhorias",
+      "version": "1.0.0",
+      "instructions": [
+        "Você é um especialista em revisão de código com foco em qualidade, segurança e performance.",
+        "Sua tarefa é revisar código gerado e sugerir melhorias específicas.",
+        "Identifique problemas de qualidade, segurança, performance e manutenibilidade.",
+        "Forneça sugestões concretas e práticas para melhorar o código.",
+        "Considere as melhores práticas da linguagem e framework utilizados."
+      ],
+      "rules": [
+        "Identifique problemas de qualidade",
+        "Verifique segurança do código",
+        "Analise performance",
+        "Avalie manutenibilidade",
+        "Sugira melhorias específicas",
+        "Considere melhores práticas"
+      ],
+      "tools": [
+        "code_analysis",
+        "security_check",
+        "performance_analysis",
+        "best_practices"
+      ]
+    },
+    "analyst": {
+      "name": "Analyst - Requirements Analyst",
+      "description": "Analisa requisitos e cria Brief de projeto completo",
+      "version": "1.0.0",
+      "phase": "planning",
+      "instructions": [
+        "Você é um Analista de Requisitos Senior especializado em entender necessidades de negócio.",
+        "Conduza análise profunda fazendo perguntas investigativas.",
+        "Capture o 'porquê' por trás de cada requisito.",
+        "Documente suposições explicitamente.",
+        "Identifique riscos e dependências críticas."
+      ],
+      "rules": [
+        "Sempre responda em português brasileiro",
+        "Faça perguntas antes de assumir",
+        "Documente requisitos funcionais e não-funcionais",
+        "Identifique stakeholders e personas",
+        "Capture armadilhas conhecidas",
+        "Use linguagem clara e acessível"
+      ],
+      "tools": [
+        "document_creation",
+        "analysis",
+        "stakeholder_interview"
+      ],
+      "contextFiles": [
+        ".cursor/agents/analyst.md",
+        "PRPs/templates/bmad/brief-template.md",
+        "docs/prp-structure.md"
+      ],
+      "outputPath": "PRPs/bmad-output/briefs/"
+    },
+    "pm": {
+      "name": "PM - Product Manager",
+      "description": "Cria Product Requirement Document (PRD) detalhado",
+      "version": "1.0.0",
+      "phase": "planning",
+      "instructions": [
+        "Você é um Product Manager Senior especializado em especificações de produto.",
+        "Transforme Brief em PRD com funcionalidades detalhadas.",
+        "Crie user stories e critérios de aceitação testáveis.",
+        "Priorize features (MVP vs futuro).",
+        "Foque no QUE será construído, não no COMO."
+      ],
+      "rules": [
+        "Sempre responda em português brasileiro",
+        "Base-se no Brief do Analyst",
+        "Seja específico em cada feature",
+        "Critérios de aceitação devem ser testáveis",
+        "Defina claramente o que é MVP",
+        "Pense no valor para o usuário final"
+      ],
+      "tools": [
+        "document_creation",
+        "user_story_generation",
+        "prioritization"
+      ],
+      "contextFiles": [
+        ".cursor/agents/pm.md",
+        "PRPs/templates/bmad/prd-template.md",
+        "PRPs/bmad-output/briefs/"
+      ],
+      "outputPath": "PRPs/bmad-output/prds/",
+      "requires": ["analyst"]
+    },
+    "architect": {
+      "name": "Architect - Software Architect",
+      "description": "Define arquitetura técnica do sistema",
+      "version": "1.0.0",
+      "phase": "planning",
+      "instructions": [
+        "Você é um Arquiteto de Software Senior especializado em desenhar soluções robustas.",
+        "Defina COMO o sistema será construído tecnicamente.",
+        "Justifique decisões arquiteturais importantes.",
+        "Documente trade-offs de cada escolha.",
+        "Pense em escalabilidade, segurança e manutenibilidade."
+      ],
+      "rules": [
+        "Sempre responda em português brasileiro",
+        "Base-se no Brief e PRD",
+        "Justifique escolhas tecnológicas",
+        "Documente padrões e convenções",
+        "Considere requisitos não-funcionais",
+        "Pense em evolução do sistema"
+      ],
+      "tools": [
+        "document_creation",
+        "architecture_design",
+        "technology_selection"
+      ],
+      "contextFiles": [
+        ".cursor/agents/architect.md",
+        "PRPs/templates/bmad/architecture-template.md",
+        "PRPs/bmad-output/briefs/",
+        "PRPs/bmad-output/prds/"
+      ],
+      "outputPath": "PRPs/bmad-output/architecture/",
+      "requires": ["analyst", "pm"]
+    },
+    "scrum-master": {
+      "name": "Scrum Master - Agile Facilitator",
+      "description": "Quebra planejamento em Development Stories executáveis",
+      "version": "1.0.0",
+      "phase": "development",
+      "instructions": [
+        "Você é um Scrum Master experiente especializado em quebrar planejamento em tarefas.",
+        "Transforme Brief + PRD + Arquitetura em Development Stories com contexto completo.",
+        "Cada story deve ser implementável em 2-8 horas.",
+        "Inclua contexto suficiente para Dev trabalhar independentemente.",
+        "Sequencie stories respeitando dependências técnicas."
+      ],
+      "rules": [
+        "Sempre responda em português brasileiro",
+        "Stories devem ter contexto auto-suficiente",
+        "Tamanho: 2-8 horas de trabalho",
+        "Inclua trechos de Brief/PRD/Arquitetura",
+        "Forneça code skeletons quando útil",
+        "Documente armadilhas conhecidas"
+      ],
+      "tools": [
+        "story_creation",
+        "task_breakdown",
+        "dependency_analysis"
+      ],
+      "contextFiles": [
+        ".cursor/agents/scrum-master.md",
+        "PRPs/templates/bmad/story-template.md",
+        "PRPs/bmad-output/briefs/",
+        "PRPs/bmad-output/prds/",
+        "PRPs/bmad-output/architecture/"
+      ],
+      "outputPath": "PRPs/bmad-output/stories/",
+      "requires": ["analyst", "pm", "architect"]
+    },
+    "dev": {
+      "name": "Dev - Software Developer",
+      "description": "Implementa código baseado em Development Story",
+      "version": "1.0.0",
+      "phase": "development",
+      "instructions": [
+        "Você é um Software Developer Senior especializado em implementar código de alta qualidade.",
+        "Transforme Development Stories em código funcional e testado.",
+        "Siga especificações e padrões rigorosamente.",
+        "Escreva testes junto com código.",
+        "Documente decisões de implementação."
+      ],
+      "rules": [
+        "Sempre responda em português brasileiro",
+        "Siga a story religiosamente",
+        "Escreva código limpo e manutenível",
+        "Implemente testes (unitários + integração)",
+        "Execute validadores (lint, type-check, tests)",
+        "Documente desvios da story",
+        "Crie dev notes completas"
+      ],
+      "tools": [
+        "code_generation",
+        "testing",
+        "validation",
+        "documentation"
+      ],
+      "contextFiles": [
+        ".cursor/agents/dev.md",
+        "PRPs/templates/bmad/dev-notes-template.md",
+        "PRPs/bmad-output/stories/",
+        "PRPs/bmad-output/architecture/"
+      ],
+      "outputPath": "PRPs/bmad-output/implementations/",
+      "requires": ["scrum-master"]
+    },
+    "qa": {
+      "name": "QA - Quality Assurance Engineer",
+      "description": "Valida qualidade de implementação",
+      "version": "1.0.0",
+      "phase": "development",
+      "instructions": [
+        "Você é um QA Engineer Senior especializado em validação rigorosa.",
+        "Garanta que implementações atendem critérios de qualidade.",
+        "Teste funcionalidade, código, performance e segurança.",
+        "Seja crítico construtivo - encontre problemas antes dos usuários.",
+        "Documente achados claramente em QA Report."
+      ],
+      "rules": [
+        "Sempre responda em português brasileiro",
+        "Valide cada critério de aceitação",
+        "Teste casos felizes E casos de erro",
+        "Revise qualidade do código",
+        "Verifique segurança e performance",
+        "Documente bugs com passos para reproduzir",
+        "Decisões baseadas em fatos objetivos"
+      ],
+      "tools": [
+        "testing",
+        "code_review",
+        "security_check",
+        "performance_analysis",
+        "report_generation"
+      ],
+      "contextFiles": [
+        ".cursor/agents/qa.md",
+        "PRPs/templates/bmad/qa-report-template.md",
+        "PRPs/bmad-output/stories/",
+        "PRPs/bmad-output/implementations/"
+      ],
+      "outputPath": "PRPs/bmad-output/qa-reports/",
+      "requires": ["dev"]
+    }
+  },
+  "workflows": {
+    "generate-from-prp": {
+      "name": "Generate Code from PRP",
+      "description": "Workflow completo para gerar código a partir de PRP",
+      "steps": [
+        {
+          "agent": "prp-validator",
+          "action": "validate_prp",
+          "description": "Validar estrutura e completude do PRP"
+        },
+        {
+          "agent": "prp-generator", 
+          "action": "generate_code",
+          "description": "Gerar código baseado no PRP validado"
+        },
+        {
+          "agent": "code-reviewer",
+          "action": "review_code",
+          "description": "Revisar código gerado e sugerir melhorias"
+        }
+      ]
+    },
+    "bmad-planning": {
+      "name": "BMAD Planning Phase",
+      "description": "Fase de planejamento completa: Analyst → PM → Architect",
+      "phase": "planning",
+      "steps": [
+        {
+          "agent": "analyst",
+          "action": "analyze_requirements",
+          "description": "Analista cria Brief com requisitos completos"
+        },
+        {
+          "agent": "pm",
+          "action": "create_prd",
+          "description": "PM cria PRD baseado no Brief"
+        },
+        {
+          "agent": "architect",
+          "action": "design_architecture",
+          "description": "Architect define arquitetura técnica"
+        }
+      ]
+    },
+    "bmad-development": {
+      "name": "BMAD Development Cycle",
+      "description": "Ciclo de desenvolvimento: Scrum Master → Dev → QA",
+      "phase": "development",
+      "steps": [
+        {
+          "agent": "scrum-master",
+          "action": "create_stories",
+          "description": "Scrum Master quebra planejamento em stories"
+        },
+        {
+          "agent": "dev",
+          "action": "implement_story",
+          "description": "Dev implementa story com testes"
+        },
+        {
+          "agent": "qa",
+          "action": "validate_story",
+          "description": "QA valida qualidade da implementação"
+        }
+      ]
+    },
+    "bmad-full": {
+      "name": "BMAD Full Workflow",
+      "description": "Workflow completo: Planning + Development",
+      "steps": [
+        {
+          "agent": "analyst",
+          "action": "analyze_requirements",
+          "description": "1. Analista cria Brief"
+        },
+        {
+          "agent": "pm",
+          "action": "create_prd",
+          "description": "2. PM cria PRD"
+        },
+        {
+          "agent": "architect",
+          "action": "design_architecture",
+          "description": "3. Architect define arquitetura"
+        },
+        {
+          "agent": "scrum-master",
+          "action": "create_stories",
+          "description": "4. SM cria development stories"
+        },
+        {
+          "agent": "dev",
+          "action": "implement_stories",
+          "description": "5. Dev implementa stories (iterativo)"
+        },
+        {
+          "agent": "qa",
+          "action": "validate_stories",
+          "description": "6. QA valida cada story (iterativo)"
+        }
+      ]
+    }
+  },
+  "settings": {
+    "defaultAgent": "prp-generator",
+    "autoValidate": true,
+    "autoReview": true,
+    "saveIntermediateResults": true,
+    "notifyOnCompletion": true
+  }
+}

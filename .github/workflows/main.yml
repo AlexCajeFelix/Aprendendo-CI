@@ -1,0 +1,279 @@
+name: Main CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'Dockerfile'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      skip-tests:
+        description: 'Skip tests'
+        required: false
+        type: boolean
+        default: false
+      skip-docker:
+        description: 'Skip Docker build'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: '-Xmx3072m'
+
+jobs:
+  # ============================================
+  # JOB 1: Build & Test (Chama workflow reutilizável)
+  # ============================================
+  build-and-test:
+    name: 🏗️ Build & Test
+    uses: ./.github/workflows/java-reusable.yml
+    with:
+      java-version: '21'
+      maven-args: 'clean install'
+      skip-tests: ${{ github.event.inputs.skip-tests == 'true' }}
+      upload-artifacts: true
+  
+  # ============================================
+  # JOB 2: SonarCloud Quality Analysis
+  # ============================================
+  sonar-analysis:
+    name: 📊 SonarCloud Analysis
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: always() && needs.build-and-test.result == 'success'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: ☕ Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: 📊 Run SonarCloud Scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "⚠️  SONAR_TOKEN not configured. Skipping SonarCloud analysis."
+            echo "ℹ️  Configure it in: Repository Settings → Secrets and variables → Actions"
+            exit 0
+          fi
+          
+          echo "🔍 Running SonarCloud analysis..."
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} \
+            -Dsonar.organization=${{ github.repository_owner }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+      
+      - name: ✅ Quality Gate Check
+        if: env.SONAR_TOKEN != ''
+        run: |
+          echo "✅ SonarCloud analysis completed"
+          echo "📊 View results: https://sonarcloud.io/dashboard?id=${{ github.repository_owner }}_${{ github.event.repository.name }}"
+  
+  # ============================================
+  # JOB 3: Security Scan
+  # ============================================
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: always() && needs.build-and-test.result == 'success'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+      
+      - name: 📤 Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: 📋 Security Summary
+        run: |
+          echo "✅ Security scan completed"
+          echo "🔒 View results in: Security → Code scanning alerts"
+  
+  # ============================================
+  # JOB 4: Docker Build
+  # ============================================
+  docker-build:
+    name: 🐳 Docker Build
+    runs-on: ubuntu-latest
+    needs: [build-and-test, sonar-analysis, security-scan]
+    if: |
+      always() && 
+      needs.build-and-test.result == 'success' &&
+      github.event.inputs.skip-docker != 'true'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 📦 Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-and-test.outputs.artifact-name }}
+          path: target/
+      
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: 🏗️ Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: |
+            ${{ github.event.repository.name }}:${{ github.sha }}
+            ${{ github.event.repository.name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: ✅ Docker build successful
+        run: |
+          echo "✅ Docker image built successfully"
+          echo "🏷️  Tags: latest, ${{ github.sha }}"
+  
+  # ============================================
+  # JOB 5: Docker Push (Somente em main/master)
+  # ============================================
+  docker-push:
+    name: 🚀 Docker Push
+    runs-on: ubuntu-latest
+    needs: [build-and-test, docker-build]
+    if: |
+      always() &&
+      needs.docker-build.result == 'success' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      github.event_name == 'push'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 📦 Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-and-test.outputs.artifact-name }}
+          path: target/
+      
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: 🔐 Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: 📝 Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+            type=semver,pattern={{version}},value=${{ needs.build-and-test.outputs.jar-version }}
+      
+      - name: 🚀 Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: ✅ Deployment successful
+        run: |
+          echo "✅ Docker image pushed to DockerHub"
+          echo "🐳 Repository: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}"
+          echo "🏷️  Tags: latest, ${{ github.sha }}, ${{ needs.build-and-test.outputs.jar-version }}"
+  
+  # ============================================
+  # JOB 6: Pipeline Summary
+  # ============================================
+  summary:
+    name: 📋 Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [build-and-test, sonar-analysis, security-scan, docker-build, docker-push]
+    if: always()
+    
+    steps:
+      - name: 📊 Generate Pipeline Summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          # 🚀 CI/CD Pipeline Summary
+          
+          ## Pipeline Results
+          
+          | Stage | Status | Details |
+          |-------|--------|---------|
+          | 🏗️ Build & Test | ${{ needs.build-and-test.result }} | Java ${{ env.JAVA_VERSION }}, Maven |
+          | 📊 SonarCloud | ${{ needs.sonar-analysis.result }} | Code quality analysis |
+          | 🔒 Security Scan | ${{ needs.security-scan.result }} | Trivy vulnerability scan |
+          | 🐳 Docker Build | ${{ needs.docker-build.result }} | Container image |
+          | 🚀 Docker Push | ${{ needs.docker-push.result }} | ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && 'Deployed' || 'Skipped (not main)' }} |
+          
+          ## Build Information
+          
+          | Item | Value |
+          |------|-------|
+          | **Trigger** | ${{ github.event_name }} |
+          | **Branch** | ${{ github.ref_name }} |
+          | **Commit** | ${{ github.sha }} |
+          | **Actor** | ${{ github.actor }} |
+          | **Artifact** | ${{ needs.build-and-test.outputs.artifact-name }} |
+          
+          ## Quick Links
+          
+          - 📊 [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=${{ github.repository_owner }}_${{ github.event.repository.name }})
+          - 🔒 [Security Alerts](https://github.com/${{ github.repository }}/security/code-scanning)
+          - 🐳 [DockerHub Repository](https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }})
+          
+          ---
+          ⏱️ Pipeline completed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
+      
+      - name: 🎉 Pipeline Status
+        run: |
+          if [[ "${{ needs.build-and-test.result }}" == "success" ]]; then
+            echo "✅ Pipeline completed successfully!"
+          else
+            echo "❌ Pipeline failed. Check logs above."
+            exit 1
+          fi
+

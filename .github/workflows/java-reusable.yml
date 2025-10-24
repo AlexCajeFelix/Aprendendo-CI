@@ -1,0 +1,128 @@
+name: Java CI Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: 'Java version to use (11, 17, 21)'
+        required: false
+        type: string
+        default: '21'
+      maven-args:
+        description: 'Maven build arguments'
+        required: false
+        type: string
+        default: 'clean install'
+      skip-tests:
+        description: 'Skip test execution'
+        required: false
+        type: boolean
+        default: false
+      upload-artifacts:
+        description: 'Upload build artifacts'
+        required: false
+        type: boolean
+        default: true
+    outputs:
+      artifact-name:
+        description: 'Name of the uploaded artifact'
+        value: ${{ jobs.build.outputs.artifact-name }}
+      build-status:
+        description: 'Build status (success/failure)'
+        value: ${{ jobs.build.outputs.build-status }}
+      jar-version:
+        description: 'Version extracted from pom.xml'
+        value: ${{ jobs.build.outputs.jar-version }}
+
+jobs:
+  build:
+    name: Build & Test Java Application
+    runs-on: ubuntu-latest
+    
+    outputs:
+      artifact-name: application-jar-${{ github.sha }}
+      build-status: ${{ steps.build.outcome }}
+      jar-version: ${{ steps.version.outputs.version }}
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: ☕ Set up JDK ${{ inputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: 🔍 Extract version from pom.xml
+        id: version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Project version: $VERSION"
+      
+      - name: 🏗️ Build with Maven
+        id: build
+        run: |
+          echo "🚀 Building with: mvn ${{ inputs.maven-args }}"
+          mvn ${{ inputs.maven-args }} -B -V \
+            -Dmaven.test.skip=${{ inputs.skip-tests }}
+          echo "✅ Build completed successfully"
+      
+      - name: 🧪 Run Tests
+        if: ${{ !inputs.skip-tests }}
+        run: |
+          echo "🧪 Running tests..."
+          mvn test -B
+          echo "✅ Tests completed"
+      
+      - name: 📊 Generate Coverage Report
+        if: ${{ !inputs.skip-tests }}
+        run: |
+          echo "📊 Generating Jacoco coverage report..."
+          mvn jacoco:report
+          
+          # Extract coverage percentage
+          if [ -f target/site/jacoco/index.html ]; then
+            COVERAGE=$(grep -oP 'Total.*?([0-9]+)%' target/site/jacoco/index.html | grep -oP '[0-9]+' | head -1)
+            echo "📊 Code Coverage: ${COVERAGE:-N/A}%"
+          fi
+      
+      - name: 📦 Upload JAR Artifact
+        if: inputs.upload-artifacts && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-jar-${{ github.sha }}
+          path: target/*.jar
+          retention-days: 30
+      
+      - name: 📊 Upload Test Reports
+        if: ${{ !inputs.skip-tests && inputs.upload-artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ github.sha }}
+          path: |
+            target/surefire-reports/
+            target/site/jacoco/
+          retention-days: 30
+      
+      - name: 📋 Build Summary
+        if: always()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          ## 🏗️ Build Summary
+          
+          | Item | Value |
+          |------|-------|
+          | **Java Version** | ${{ inputs.java-version }} |
+          | **Maven Args** | \`${{ inputs.maven-args }}\` |
+          | **Tests** | ${{ inputs.skip-tests && '⏭️ Skipped' || '✅ Executed' }} |
+          | **Build Status** | ${{ steps.build.outcome }} |
+          | **Project Version** | ${{ steps.version.outputs.version }} |
+          | **Artifact** | application-jar-${{ github.sha }} |
+          
+          ---
+          ⏱️ Build completed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
+

@@ -1,0 +1,100 @@
+# ============================================
+# SonarCloud Configuration Template
+# ============================================
+# 
+# INSTRUÇÕES DE USO:
+# 1. Copie este arquivo para a raiz do seu projeto como "sonar-project.properties"
+# 2. Substitua os valores entre {{ }} pelos valores reais do seu projeto
+# 3. Configure SONAR_TOKEN nos secrets do GitHub
+# 4. Faça commit e push
+#
+# Obtenha seu token em: https://sonarcloud.io/account/security
+# ============================================
+
+# ============================================
+# Identificação do Projeto
+# ============================================
+sonar.projectKey={{GITHUB_ORG}}_{{REPO_NAME}}
+sonar.organization={{GITHUB_ORG}}
+sonar.projectName={{PROJECT_NAME}}
+sonar.projectVersion=1.0
+
+# ============================================
+# Source and Test Paths
+# ============================================
+sonar.sources=src/main/java
+sonar.tests=src/test/java
+
+# Encoding
+sonar.sourceEncoding=UTF-8
+
+# ============================================
+# Java Configuration
+# ============================================
+sonar.java.source=21
+sonar.java.target=21
+sonar.java.binaries=target/classes
+sonar.java.test.binaries=target/test-classes
+
+# ============================================
+# Code Coverage
+# ============================================
+sonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+sonar.junit.reportPaths=target/surefire-reports
+
+# ============================================
+# Exclusions
+# ============================================
+# Arquivos que NÃO devem ser analisados
+sonar.exclusions=\
+  **/config/**,\
+  **/dto/**,\
+  **/entity/**,\
+  **/model/**,\
+  **/*Application.java,\
+  **/generated/**,\
+  **/target/**
+
+# Arquivos que NÃO devem ser incluídos no coverage
+sonar.coverage.exclusions=\
+  **/config/**,\
+  **/dto/**,\
+  **/entity/**,\
+  **/model/**,\
+  **/*Application.java,\
+  **/exception/**
+
+# Testes que devem ser excluídos da análise
+sonar.test.exclusions=\
+  **/test/**
+
+# ============================================
+# Quality Gate Configuration
+# ============================================
+# Aguarda resultado do Quality Gate antes de finalizar
+sonar.qualitygate.wait=true
+sonar.qualitygate.timeout=300
+
+# ============================================
+# Pull Request Configuration
+# ============================================
+# Estas variáveis são configuradas automaticamente pelo GitHub Actions
+# sonar.pullrequest.key=${GITHUB_PR_NUMBER}
+# sonar.pullrequest.branch=${GITHUB_HEAD_REF}
+# sonar.pullrequest.base=${GITHUB_BASE_REF}
+
+# ============================================
+# Additional Settings (Opcional)
+# ============================================
+# Links para documentação
+#sonar.links.homepage=https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}
+#sonar.links.ci=https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/actions
+#sonar.links.scm=https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}
+#sonar.links.issue=https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues
+
+# Análise de duplicação (padrão: 100 tokens)
+#sonar.cpd.java.minimumTokens=100
+
+# Rules específicas
+#sonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
+

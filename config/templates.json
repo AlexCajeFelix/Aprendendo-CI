@@ -1,0 +1,85 @@
+{
+  "templates": {
+    "web-application": {
+      "name": "Aplicação Web Completa",
+      "description": "Template para aplicações web completas com frontend e backend",
+      "complexity": ["Baixa", "Média", "Alta"],
+      "estimatedTime": "8-40 horas",
+      "technologies": [
+        "React", "Vue", "Angular", "Next.js", "Nuxt.js",
+        "Node.js", "Express", "FastAPI", "Django",
+        "PostgreSQL", "MySQL", "MongoDB"
+      ],
+      "categories": ["fullstack", "web", "spa", "ssr"],
+      "file": "templates/web-application.md"
+    },
+    "api-service": {
+      "name": "Serviço de API",
+      "description": "Template para serviços de API REST/GraphQL",
+      "complexity": ["Baixa", "Média", "Alta"],
+      "estimatedTime": "4-20 horas",
+      "technologies": [
+        "Node.js", "Express", "FastAPI", "Spring Boot",
+        "PostgreSQL", "MySQL", "MongoDB", "Redis"
+      ],
+      "categories": ["backend", "api", "rest", "graphql"],
+      "file": "templates/api-service.md"
+    },
+    "database-schema": {
+      "name": "Schema de Banco de Dados",
+      "description": "Template para estruturas de banco de dados",
+      "complexity": ["Baixa", "Média", "Alta"],
+      "estimatedTime": "2-12 horas",
+      "technologies": [
+        "PostgreSQL", "MySQL", "MongoDB", "SQLite"
+      ],
+      "categories": ["database", "schema", "migration"],
+      "file": "templates/database-schema.md"
+    },
+    "microservice": {
+      "name": "Microserviço",
+      "description": "Template para arquitetura de microsserviços",
+      "complexity": ["Média", "Alta"],
+      "estimatedTime": "12-60 horas",
+      "technologies": [
+        "Node.js", "Python", "Java", "Go", ".NET",
+        "Docker", "Kubernetes", "RabbitMQ", "Kafka"
+      ],
+      "categories": ["microservice", "distributed", "cloud"],
+      "file": "templates/microservice.md"
+    },
+    "frontend-component": {
+      "name": "Componente Frontend",
+      "description": "Template para componentes de interface reutilizáveis",
+      "complexity": ["Baixa", "Média", "Alta"],
+      "estimatedTime": "1-8 horas",
+      "technologies": [
+        "React", "Vue", "Angular", "Svelte",
+        "TypeScript", "CSS Modules", "Styled Components"
+      ],
+      "categories": ["frontend", "component", "ui", "reusable"],
+      "file": "templates/frontend-component.md"
+    }
+  },
+  "defaults": {
+    "language": "português brasileiro",
+    "codeLanguage": "typescript",
+    "framework": "react",
+    "database": "postgresql",
+    "testing": "jest",
+    "styling": "tailwind"
+  },
+  "validation": {
+    "requiredSections": [
+      "Contexto do Projeto",
+      "Requisitos Funcionais", 
+      "Requisitos Técnicos",
+      "Entregáveis Esperados"
+    ],
+    "optionalSections": [
+      "Critérios de Qualidade",
+      "Exemplos e Referências",
+      "Considerações Adicionais"
+    ]
+  }
+}

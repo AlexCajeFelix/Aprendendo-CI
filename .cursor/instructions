@@ -1,0 +1,82 @@
+# Instruções para Agentes de IA
+
+## Visão Geral
+Este projeto contém templates genéricos de PRPs (Product Requirement Prompts) para uso com agentes de IA no Cursor. O objetivo é permitir que agentes gerem código de alta qualidade baseado em requisitos bem estruturados.
+
+## Como Usar os PRPs
+
+### 1. Seleção do Template
+- Escolha o template mais apropriado em `templates/`
+- Leia a documentação do template
+- Entenda as seções obrigatórias e opcionais
+
+### 2. Preenchimento do PRP
+- Complete todas as seções obrigatórias
+- Use exemplos claros e específicos
+- Inclua contexto suficiente para o agente entender
+
+### 3. Execução
+- Use o PRP completo como prompt para o agente
+- Monitore a geração do código
+- Valide se o resultado atende aos requisitos
+
+## Estrutura Padrão de PRP
+
+### Contexto do Projeto
+- Descrição geral do projeto
+- Tecnologias utilizadas
+- Arquitetura desejada
+- Documentação
+
+### Requisitos Funcionais
+- Funcionalidades principais
+- Casos de uso específicos
+- Regras de negócio
+
+### Requisitos Técnicos
+- Stack tecnológico
+- Padrões de código
+- Estrutura de arquivos
+
+### Entregáveis Esperados
+- Arquivos a serem criados
+- Funcionalidades implementadas
+- Testes incluídos
+
+## Melhores Práticas
+
+### Para Agentes
+- Sempre gere código completo e funcional
+- Inclua testes quando apropriado
+- Siga as convenções do projeto
+- Adicione comentários explicativos
+
+### Para Desenvolvedores
+- Seja específico nos requisitos
+- Forneça contexto suficiente
+- Revise e teste o código gerado
+- Itere conforme necessário
+
+## Configurações do Cursor
+
+### Background Agents
+- Configure agentes para trabalhar com PRPs
+- Defina regras específicas para cada template
+- Monitore a qualidade do código gerado
+
+### Extensões Recomendadas
+- Extensões para as tecnologias do projeto
+- Ferramentas de formatação de código
+- Linters e validadores apropriados
+
+## Troubleshooting
+
+### Problemas Comuns
+- PRP muito vago: Adicione mais detalhes
+- Código incompleto: Especifique melhor os requisitos
+- Erros de sintaxe: Verifique as configurações do agente
+
+### Soluções
+- Itere no PRP com mais detalhes
+- Use exemplos mais específicos
+- Configure melhor o ambiente do agente

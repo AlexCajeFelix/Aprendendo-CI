@@ -1,0 +1,125 @@
+{
+  "mcp": {
+    "provider": "metodoce",
+    "version": "1.0.0",
+    "description": "Configuração MCP para integração com GitHub via Metodoce",
+    "capabilities": {
+      "repository_access": {
+        "enabled": true,
+        "tools": [
+          "mcp_metodoce_get_file_contents",
+          "mcp_metodoce_list_branches",
+          "mcp_metodoce_list_commits",
+          "mcp_metodoce_get_commit"
+        ]
+      },
+      "file_management": {
+        "enabled": true,
+        "tools": [
+          "mcp_metodoce_create_or_update_file",
+          "mcp_metodoce_delete_file",
+          "mcp_metodoce_push_files"
+        ]
+      },
+      "pull_request_management": {
+        "enabled": true,
+        "tools": [
+          "mcp_metodoce_create_pull_request",
+          "mcp_metodoce_get_pull_request",
+          "mcp_metodoce_update_pull_request",
+          "mcp_metodoce_create_pending_pull_request_review",
+          "mcp_metodoce_submit_pending_pull_request_review"
+        ]
+      },
+      "branch_management": {
+        "enabled": true,
+        "tools": [
+          "mcp_metodoce_create_branch",
+          "mcp_metodoce_list_branches"
+        ]
+      },
+      "code_analysis": {
+        "enabled": true,
+        "tools": [
+          "mcp_metodoce_search_code",
+          "mcp_metodoce_get_file_contents"
+        ]
+      }
+    },
+    "workflows": {
+      "prp_generation": {
+        "name": "PRP Code Generation Workflow",
+        "description": "Workflow completo para gerar código a partir de PRPs usando MCP",
+        "steps": [
+          {
+            "step": 1,
+            "name": "Repository Analysis",
+            "description": "Analisar repositório existente",
+            "tools": ["mcp_metodoce_get_file_contents", "mcp_metodoce_list_branches"],
+            "output": "repository_structure_analysis"
+          },
+          {
+            "step": 2,
+            "name": "Branch Creation",
+            "description": "Criar branch para nova feature",
+            "tools": ["mcp_metodoce_create_branch"],
+            "output": "feature_branch_created"
+          },
+          {
+            "step": 3,
+            "name": "Code Generation",
+            "description": "Gerar código baseado no PRP",
+            "tools": ["mcp_metodoce_create_or_update_file", "mcp_metodoce_push_files"],
+            "output": "code_generated_and_committed"
+          },
+          {
+            "step": 4,
+            "name": "Pull Request Creation",
+            "description": "Criar Pull Request",
+            "tools": ["mcp_metodoce_create_pull_request"],
+            "output": "pull_request_created"
+          }
+        ]
+      }
+    },
+    "settings": {
+      "defaultBranchPrefix": "feature/prp-",
+      "autoCreatePullRequests": true,
+      "pullRequestTemplate": {
+        "title": "feat: {feature_name} - Gerado via PRP",
+        "body": "## 📋 Descrição\n\nEste PR foi gerado automaticamente baseado no PRP fornecido.\n\n## 🔧 Mudanças Implementadas\n\n- {changes_list}\n\n## 🧪 Testes\n\n- [ ] Testes unitários adicionados\n- [ ] Testes de integração verificados\n- [ ] Documentação atualizada\n\n## 📝 Notas Adicionais\n\n{additional_notes}"
+      },
+      "codeAnalysis": {
+        "analyzeBeforeGeneration": true,
+        "checkExistingPatterns": true,
+        "maintainConsistency": true,
+        "validateCodeStyle": true
+      },
+      "repository": {
+        "analyzeStructure": true,
+        "checkDependencies": true,
+        "validateArchitecture": true,
+        "maintainConventions": true
+      }
+    },
+    "templates": {
+      "prp_requirements": {
+        "repository_info": {
+          "required": true,
+          "fields": ["owner", "repo", "branch"],
+          "description": "Informações do repositório GitHub de destino"
+        },
+        "analysis_requirements": {
+          "required": true,
+          "fields": ["analyze_existing_code", "maintain_patterns", "check_dependencies"],
+          "description": "Requisitos para análise do repositório existente"
+        },
+        "generation_requirements": {
+          "required": true,
+          "fields": ["create_branch", "generate_code", "create_pr"],
+          "description": "Requisitos para geração de código"
+        }
+      }
+    }
+  }
+}

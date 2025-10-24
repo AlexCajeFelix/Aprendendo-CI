@@ -1,0 +1,41 @@
+# Regras do Cursor para PRPs
+
+## Contexto Geral
+Este projeto implementa PRPs (Product Requirement Prompts) genéricos para uso com agentes de IA no Cursor.
+
+## Regras de Desenvolvimento
+
+### 1. Estrutura de Arquivos
+- Sempre mantenha a estrutura de diretórios definida
+- Use nomes descritivos para arquivos e pastas
+- Organize código por funcionalidade, não por tipo
+
+### 2. Documentação
+- Documente todos os PRPs de forma clara e completa
+- Inclua exemplos de uso sempre que possível
+- Mantenha a documentação atualizada
+
+### 3. Templates
+- Templates devem ser genéricos e reutilizáveis
+- Inclua seções obrigatórias e opcionais
+- Forneça exemplos de preenchimento
+
+### 4. Código Gerado
+- Priorize código limpo e bem estruturado
+- Inclua comentários explicativos
+- Siga as melhores práticas da linguagem/framework
+
+### 5. Configuração
+- Mantenha configurações em arquivos separados
+- Use variáveis de ambiente quando apropriado
+- Documente todas as configurações necessárias
+
+## Linguagem
+- Sempre responda em português brasileiro
+- Use terminologia técnica em inglês quando apropriado
+- Mantenha consistência na comunicação
+
+## Agentes de IA
+- Configure agentes para seguir estas regras
+- Priorize qualidade sobre velocidade
+- Valide sempre o código gerado

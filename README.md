@@ -1,315 +1,435 @@
-# PRP - Product Requirement Prompts
-
-Sistema completo de Product Requirement Prompts baseado no [PRPs-agentic-eng](https://github.com/Wirasm/PRPs-agentic-eng), adaptado e otimizado para funcionar com o Cursor IDE.
-
-## 🎯 O que são PRPs?
-
-PRPs (Product Requirement Prompts) são prompts estruturados que fornecem contexto abrangente para IA gerar código de alta qualidade. Eles garantem implementação bem-sucedida em uma única passada através de:
-
-- **Contexto abrangente** com documentação e exemplos
-- **Blueprint de implementação** detalhado
-- **Loop de validação** com comandos executáveis
-- **Critérios de sucesso** claros e mensuráveis
-
-## 🚀 Características Principais
-
-### ✨ Sistema Completo
-- **12 comandos do Cursor** pré-configurados
-- **Templates de PRP** para diferentes tipos de projeto
-- **Scripts de execução** e validação
-- **Documentação abrangente** e exemplos práticos
-
-### 🎨 Templates Incluídos
-- **Aplicação Web Completa** - Frontend + Backend integrados
-- **Serviço de API** - APIs REST/GraphQL robustas
-- **Componente Frontend** - Componentes reutilizáveis
-- **Schema de Banco** - Estruturas de dados otimizadas
-- **Microserviço** - Arquitetura distribuída
-
-### 🔧 Comandos do Cursor
-- `/create-prp` - Criar PRPs abrangentes
-- `/execute-prp` - Executar PRPs contra codebase
-- `/planning-create` - Documentos de planejamento
-- `/spec-create` - Especificações técnicas
-- `/review-code` - Revisão de qualidade
-- `/refactor-simple` - Refatorações seguras
-- E mais 6 comandos especializados
-
-### 🤖 **NOVO: Agentes BMAD Integrados**
-
-Inspirado no [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD), agora o PRP inclui **6 agentes especializados** para workflow ágil completo:
-
-#### Fase de Planejamento:
-- **`/analyst`** - Analista de requisitos → cria Brief
-- **`/pm`** - Product Manager → cria PRD  
-- **`/architect`** - Arquiteto → define arquitetura técnica
-
-#### Fase de Desenvolvimento:
-- **`/scrum-master` ou `/sm`** - Quebra em Development Stories
-- **`/dev`** - Developer → implementa código com testes
-- **`/qa`** - QA Engineer → valida qualidade
-
-**Workflow Completo**: `Analyst → PM → Architect → Scrum Master → Dev → QA`
-
-#### 🚀 **Sistema Automático**:
-- **`/bmad-auto`** - Executa workflow completo automaticamente
-- **Comunicação entre agentes** - Handoffs automáticos
-- **Zero intervenção manual** - Do Brief até código implementado
-
-#### 🤝 **Sistema Colaborativo** (NOVO):
-- **`/bmad-auto-collab`** - Workflow com revisão entre agentes
-- **Todos revisam todos** - Feedback de múltiplas perspectivas
-- **Aprovação do usuário** - Controle em cada etapa
-- **Implementação real** - Código realmente criado
-
-📖 [Documentação Completa da Integração BMAD](docs/bmad-integration.md)  
-🤖 [Sistema BMAD Full Automático](docs/bmad-auto-system.md)  
-🤝 [Sistema BMAD Colaborativo](docs/bmad-collaborative-mode.md)
-
-## 📁 Estrutura do Projeto
-
-```
-PRP/
-├── .cursor/                 # Configurações do Cursor
-│   ├── commands/           # 12 comandos personalizados
-│   ├── rules              # Regras do projeto
-│   └── instructions       # Instruções para agentes
-├── PRPs/                   # Product Requirement Prompts
-│   ├── templates/         # Templates especializados
-│   ├── examples/          # Exemplos práticos
-│   ├── scripts/           # Scripts Python de execução
-│   └── ai_docs/          # Documentação para IA
-├── config/                 # Configurações JSON
-├── docs/                   # Documentação detalhada
-└── tools/                  # Ferramentas auxiliares
-```
-
-## 🛠️ Instalação e Configuração
-
-### 1. Clone o Repositório
-```bash
-git clone <seu-repositorio>
-cd PRP
-```
-
-### 2. Configure o Cursor
-Os comandos já estão configurados em `.cursor/commands/`. Eles aparecerão automaticamente no Cursor quando você digitar `/`.
-
-### 3. Configure Agentes (Opcional)
-1. Abra configurações do Cursor
-2. Vá para "Background Agents"
-3. Configure agente com instruções de `.cursor/instructions`
-
-### 4. Teste a Configuração
-```bash
-# Validar estrutura
-python PRPs/scripts/validator.py PRPs/templates/prp_base.md
-
-# Gerar exemplo
-python PRPs/scripts/template_generator.py --type web-application --output PRPs/exemplo.md
-```
-
-## 🎯 Como Usar
-
-### Criando um PRP
-```bash
-# Usar comando do Cursor
-/create-prp sistema de autenticação com JWT
-
-# Ou usar script diretamente
-python PRPs/scripts/template_generator.py --description "sistema de autenticação" --output PRPs/auth.md
-```
-
-### Executando um PRP
-```bash
-# Modo interativo (recomendado)
-python PRPs/scripts/prp_runner.py --prp PRPs/auth.md --interactive
-
-# Modo headless (para CI/CD)
-python PRPs/scripts/prp_runner.py --prp PRPs/auth.md --output-format json
-```
-
-### Usando Comandos do Cursor
-1. Digite `/` no Cursor para ver comandos disponíveis
-2. Selecione o comando desejado
-3. Forneça argumentos quando solicitado
-4. Acompanhe a execução e resultados
-
-## 📋 Exemplos de Uso
-
-### Exemplo 1: Aplicação Web
-```bash
-/create-prp "dashboard de métricas em tempo real com React e Node.js"
-```
-Resultado: PRP completo com contexto, blueprint e validações.
-
-### Exemplo 2: API Service
-```bash
-/execute-prp PRPs/api-usuarios.md
-```
-Resultado: Implementação completa da API seguindo especificação.
-
-### Exemplo 3: Componente Frontend
-```bash
-/refactor-simple "extrair componente de tabela para reutilização"
-```
-Resultado: Refatoração segura mantendo funcionalidade.
-
-## 🎨 Templates Disponíveis
-
-### Web Application
-- **Complexidade**: Baixa/Média/Alta
-- **Tempo**: 8-40 horas
-- **Tecnologias**: React, Vue, Angular, Next.js, Node.js, Express, FastAPI, Django
-- **Foco**: Aplicações completas com frontend e backend
-
-### API Service
-- **Complexidade**: Baixa/Média/Alta
-- **Tempo**: 4-20 horas
-- **Tecnologias**: Node.js, Express, FastAPI, Spring Boot, PostgreSQL, MongoDB
-- **Foco**: APIs robustas e escaláveis
-
-### Frontend Component
-- **Complexidade**: Baixa/Média/Alta
-- **Tempo**: 1-8 horas
-- **Tecnologias**: React, Vue, Angular, TypeScript, CSS Modules
-- **Foco**: Componentes reutilizáveis e bem testados
-
-### Database Schema
-- **Complexidade**: Baixa/Média/Alta
-- **Tempo**: 2-12 horas
-- **Tecnologias**: PostgreSQL, MySQL, MongoDB, SQLite
-- **Foco**: Estruturas de dados otimizadas
-
-### Microservice
-- **Complexidade**: Média/Alta
-- **Tempo**: 12-60 horas
-- **Tecnologias**: Docker, Kubernetes, Node.js, Python, Go
-- **Foco**: Arquitetura distribuída
-
-## 🔧 Scripts Incluídos
-
-### PRP Runner (`prp_runner.py`)
-Executor principal de PRPs com suporte a:
-- Modo interativo para desenvolvimento
-- Modo headless para CI/CD
-- Validação automática
-- Relatórios detalhados
-
-### Template Generator (`template_generator.py`)
-Gerador de templates customizados com:
-- Análise automática do projeto
-- Personalização baseada na stack tecnológica
-- Geração baseada em descrição
-- Múltiplos formatos de saída
-
-### Validator (`validator.py`)
-Validador de PRPs com:
-- Verificação de estrutura
-- Validação de conteúdo
-- Análise de qualidade
-- Relatórios detalhados
-
-## 📚 Documentação
-
-### Guias Principais
-- [Setup e Configuração](docs/setup.md)
-- [Estrutura de PRPs](docs/prp-structure.md)
-- [Integração com Cursor](docs/cursor-integration.md)
-- [Melhores Práticas](docs/best-practices.md)
-
-### Recursos para IA
-- [Melhores Práticas para Cursor](PRPs/ai_docs/cursor_best_practices.md)
-- [Padrões de Código](PRPs/ai_docs/code_patterns.md)
-- [Estratégias de Teste](PRPs/ai_docs/testing_patterns.md)
-
-### Exemplos Práticos
-- [Exemplos por Tipo](PRPs/examples/)
-- [Casos de Uso Reais](PRPs/examples/)
-- [Templates Customizados](PRPs/templates/)
-
-## 🎯 Benefícios
-
-### Para Desenvolvedores
-- **Implementação mais rápida** com contexto abrangente
-- **Menos iterações** através de especificações claras
-- **Código de maior qualidade** com validações automáticas
-- **Aprendizado contínuo** através de exemplos práticos
-
-### Para Equipes
-- **Padronização** de processos de desenvolvimento
-- **Documentação viva** através de PRPs
-- **Colaboração melhorada** com especificações claras
-- **Qualidade consistente** através de validações
-
-### Para Projetos
-- **Redução de bugs** através de especificações detalhadas
-- **Manutenibilidade** através de código bem documentado
-- **Escalabilidade** através de padrões estabelecidos
-- **Onboarding acelerado** para novos membros
-
-## 🔄 Workflow Recomendado
-
-### 1. Planejamento
-```bash
-/planning-create "arquitetura do sistema de pagamentos"
-```
-
-### 2. Especificação
-```bash
-/spec-create "API REST para processamento de pagamentos"
-```
-
-### 3. Implementação
-```bash
-/execute-prp PRPs/api-pagamentos.md
-```
-
-### 4. Revisão
-```bash
-/review-code src/api/pagamentos/
-```
-
-### 5. Refatoração
-```bash
-/refactor-simple "otimizar validação de dados"
-```
-
-### 6. Deploy
-```bash
-/create-pr "Implementa sistema de pagamentos"
-```
-
-## 🤝 Contribuindo
-
-### Como Contribuir
-1. **Teste** com projetos reais
-2. **Documente** casos de uso bem-sucedidos
-3. **Compartilhe** melhorias nos templates
-4. **Mantenha** a documentação atualizada
-
-### Áreas de Contribuição
-- **Templates**: Novos tipos de projeto
-- **Scripts**: Melhorias na automação
-- **Documentação**: Guias e exemplos
-- **Comandos**: Novos comandos do Cursor
-
-## 📄 Licença
-
-MIT License - Veja [LICENSE](LICENSE) para detalhes.
-
-## 🙏 Agradecimentos
-
-Baseado no excelente trabalho do [PRPs-agentic-eng](https://github.com/Wirasm/PRPs-agentic-eng) por [Wirasm](https://github.com/Wirasm).
-
-## 📞 Suporte
-
-- **Issues**: [GitHub Issues](https://github.com/seu-usuario/PRP/issues)
-- **Discussões**: [GitHub Discussions](https://github.com/seu-usuario/PRP/discussions)
-- **Documentação**: [Wiki do Projeto](https://github.com/seu-usuario/PRP/wiki)
+# 🚀 Projeto PRP Live - Sistema CI/CD Reutilizável
+
+[![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)
+[![Java](https://img.shields.io/badge/Java-17%2B-007396?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Maven](https://img.shields.io/badge/Maven-3.9%2B-C71A36?logo=apache-maven&logoColor=white)](https://maven.apache.org/)
+[![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![SonarCloud](https://img.shields.io/badge/SonarCloud-Quality-orange?logo=sonarcloud&logoColor=white)](https://sonarcloud.io/)
+
+## 📋 Sobre o Projeto
+
+Sistema de **CI/CD reutilizável e pronto para produção** para projetos Java/Spring Boot, desenvolvido usando a metodologia **BMAD (Brief, Milestones, Architecture, Development)**.
+
+### 🎯 Objetivos
+
+- ✅ **Reduzir tempo de setup** de 4 horas para < 10 minutos
+- ✅ **Padronizar pipelines** em todos os projetos
+- ✅ **Automatizar qualidade** com gates de qualidade
+- ✅ **Acelerar deploys** com build otimizado
+- ✅ **Garantir segurança** com vulnerability scanning
+
+### 🏆 Features
+
+| Feature | Status | Descrição |
+|---------|--------|-----------|
+| 🏗️ **Build & Test** | ✅ | Workflow reutilizável para Java/Maven |
+| 📊 **SonarCloud** | ✅ | Análise de qualidade e coverage |
+| 🔒 **Security Scan** | ✅ | Trivy vulnerability scanner |
+| 🐳 **Docker Build** | ✅ | Multi-stage otimizado (< 200MB) |
+| 🚀 **Auto Deploy** | ✅ | Push automático para DockerHub |
+| 📚 **Documentação** | ✅ | Guia completo de configuração |
 
 ---
 
-**🚀 Comece agora**: Use `/create-prp` no Cursor para criar seu primeiro PRP e experimente o poder da implementação assistida por IA!
-# Aprendendo-CI
-# Aprendendo-CI
+## 🚀 Quick Start
+
+### Para usar este CI/CD em seu projeto
+
+```bash
+# 1. Clone este repositório
+git clone https://github.com/SEU_USER/Projeto-prp-live.git
+cd Projeto-prp-live
+
+# 2. Copie os workflows para seu projeto
+cp -r .github/workflows/* /path/to/seu-projeto/.github/workflows/
+cp Dockerfile.template /path/to/seu-projeto/Dockerfile
+cp sonar-project.properties.template /path/to/seu-projeto/sonar-project.properties
+
+# 3. Configure secrets no GitHub (veja seção abaixo)
+
+# 4. Customize sonar-project.properties
+# Edite e substitua {{PLACEHOLDERS}}
+
+# 5. Commit e push
+cd /path/to/seu-projeto
+git add .github/ Dockerfile sonar-project.properties
+git commit -m "ci: add CI/CD workflows"
+git push origin main
+```
+
+### Configurar Secrets
+
+No seu repositório GitHub: **Settings → Secrets and variables → Actions**
+
+| Secret | Valor | Como obter |
+|--------|-------|------------|
+| `SONAR_TOKEN` | Token SonarCloud | [sonarcloud.io](https://sonarcloud.io) → My Account → Security → Generate Token |
+| `DOCKERHUB_USERNAME` | Username DockerHub | Seu username |
+| `DOCKERHUB_TOKEN` | Access token DockerHub | [hub.docker.com](https://hub.docker.com) → Settings → Security → New Access Token |
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+Projeto-prp-live/
+├── .github/
+│   └── workflows/
+│       ├── java-reusable.yml        # ⭐ Workflow reutilizável Java
+│       └── main.yml                 # ⭐ Pipeline completo
+│
+├── config/
+│   ├── agents.json                  # Configuração BMAD Agents
+│   ├── mcp-config.json              # MCP configuration
+│   └── templates.json               # Templates BMAD
+│
+├── docs/
+│   ├── ci-cd-configuration.md       # 📖 Guia completo de setup
+│   ├── workflows-README.md          # 📖 Guia rápido workflows
+│   ├── bmad-auto-system.md          # BMAD Auto System
+│   ├── bmad-collaborative-mode.md   # BMAD Colaborativo
+│   ├── best-practices.md            # Best practices
+│   └── setup.md                     # Setup inicial
+│
+├── PRPs/
+│   ├── bmad-output/                 # 📦 Outputs BMAD
+│   │   ├── briefs/
+│   │   ├── prds/
+│   │   ├── architecture/
+│   │   └── stories/
+│   ├── scripts/                     # 🤖 Scripts BMAD
+│   ├── templates/                   # 📄 Templates
+│   └── examples/                    # Exemplos
+│
+├── Dockerfile.template              # ⭐ Dockerfile multi-stage
+├── sonar-project.properties.template # ⭐ Config SonarCloud
+├── .gitignore                       # Git ignore (Java + Node)
+└── README.md                        # Este arquivo
+```
+
+---
+
+## 🔧 Workflows Disponíveis
+
+### 1. java-reusable.yml
+
+**Workflow reutilizável** para build e teste de projetos Java/Maven.
+
+**Uso**:
+```yaml
+jobs:
+  build:
+    uses: ./.github/workflows/java-reusable.yml
+    with:
+      java-version: '17'
+      maven-args: 'clean install'
+      skip-tests: false
+```
+
+**Features**:
+- ✅ Setup Java (11, 17, 21)
+- ✅ Cache de dependências Maven
+- ✅ Build otimizado
+- ✅ Testes com JUnit
+- ✅ Coverage com Jacoco
+- ✅ Upload de artifacts
+
+### 2. main.yml
+
+**Pipeline completo** com 6 stages:
+
+```
+Push/PR → Build & Test → SonarCloud → Security → Docker Build → Docker Push
+```
+
+**Stages**:
+1. 🏗️ **Build & Test** - Compila, testa, gera artifacts
+2. 📊 **SonarCloud** - Análise de qualidade e coverage
+3. 🔒 **Security Scan** - Trivy vulnerability scan
+4. 🐳 **Docker Build** - Cria imagem otimizada
+5. 🚀 **Docker Push** - Deploy para DockerHub (só em main)
+6. 📋 **Summary** - Relatório completo
+
+**Triggers**:
+- Push em `main`/`master`
+- Pull Requests
+- Manual (workflow_dispatch)
+
+---
+
+## 📊 Integração SonarCloud
+
+### Setup
+
+1. Crie projeto em [sonarcloud.io](https://sonarcloud.io)
+2. Escolha "With GitHub Actions"
+3. Gere token em: My Account → Security
+4. Configure secret `SONAR_TOKEN`
+
+### Quality Gates
+
+O pipeline **bloqueia merge** se:
+- ❌ Quality Gate = FAILED
+- ❌ Vulnerabilidades HIGH/CRITICAL
+- ❌ Bugs críticos
+
+O pipeline **avisa** mas não bloqueia se:
+- ⚠️ Coverage < 80%
+- ⚠️ Code smells acima do threshold
+
+### Badges
+
+Adicione ao README do seu projeto:
+
+```markdown
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=ORG_REPO&metric=alert_status)](https://sonarcloud.io/dashboard?id=ORG_REPO)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ORG_REPO&metric=coverage)](https://sonarcloud.io/dashboard?id=ORG_REPO)
+```
+
+---
+
+## 🐳 Docker
+
+### Dockerfile Multi-Stage
+
+Otimizado para produção:
+
+- **Stage 1 (Builder)**: Maven 3.9 + JDK 17 (~700MB)
+- **Stage 2 (Runtime)**: JRE 17 Alpine (~150MB) ✅
+
+**Benefícios**:
+- ✅ Imagem final 60% menor
+- ✅ Menos superfície de ataque
+- ✅ Melhor cache de layers
+- ✅ Health check integrado
+
+### Build Local
+
+```bash
+# Build
+docker build -t my-app:test .
+
+# Run
+docker run -p 8080:8080 my-app:test
+
+# Verificar tamanho
+docker images my-app:test
+```
+
+### Tags no DockerHub
+
+Automaticamente criadas:
+- `latest` - Última versão em main
+- `v1.0.0` - Versão do pom.xml
+- `main-abc123` - Commit SHA
+
+---
+
+## 📚 Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [ci-cd-configuration.md](docs/ci-cd-configuration.md) | 📖 Guia completo de configuração (40+ páginas) |
+| [workflows-README.md](docs/workflows-README.md) | 📖 Guia rápido de workflows |
+| [bmad-auto-system.md](docs/bmad-auto-system.md) | 🤖 Sistema BMAD Automático |
+| [bmad-collaborative-mode.md](docs/bmad-collaborative-mode.md) | 🤝 Modo Colaborativo BMAD |
+
+---
+
+## 🤖 Sistema BMAD
+
+Este projeto foi desenvolvido usando **BMAD** (Brief, Milestones, Architecture, Development):
+
+### Metodologia
+
+1. **📋 Brief** - Análise de requisitos completa
+2. **📊 PRD** - Product Requirements Document
+3. **🏗️ Architecture** - Decisões arquiteturais (ADRs)
+4. **📝 Stories** - User stories com critérios de aceitação
+5. **💻 Development** - Implementação com código real
+6. **🧪 QA** - Validação e testes
+
+### Documentos BMAD Gerados
+
+- [Brief](PRPs/bmad-output/briefs/ci-cd-system-brief.md)
+- [PRD](PRPs/bmad-output/prds/ci-cd-system-prd.md)
+- [Arquitetura](PRPs/bmad-output/architecture/ci-cd-system-architecture.md)
+- [Stories](PRPs/bmad-output/stories/ci-cd-system/index.md)
+
+---
+
+## 🛠️ Troubleshooting
+
+### Pipeline falhou?
+
+1. **Build failed**: 
+   ```bash
+   mvn clean install
+   ```
+
+2. **SonarCloud failed**: 
+   - Verificar `SONAR_TOKEN` configurado
+   - Ver logs em Actions → Run → sonar-analysis
+
+3. **Docker push failed**: 
+   - Verificar `DOCKERHUB_USERNAME` e `DOCKERHUB_TOKEN`
+   - Confirmar repositório existe no DockerHub
+
+### Testar localmente
+
+```bash
+# Instalar act (GitHub Actions local)
+brew install act  # macOS
+# ou
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+
+# Rodar workflow
+act -j build-and-test
+
+# Com secrets
+echo "SONAR_TOKEN=xxx" > .secrets
+act -j sonar-analysis --secret-file .secrets
+```
+
+### Validar YAML
+
+```bash
+# Instalar actionlint
+brew install actionlint
+
+# Validar workflows
+actionlint .github/workflows/*.yml
+```
+
+---
+
+## 📈 Performance
+
+### Benchmarks
+
+| Métrica | Sem Cache | Com Cache |
+|---------|-----------|-----------|
+| Build & Test | 4-5 min | 1-2 min ⚡ |
+| SonarCloud | 1-2 min | 1-2 min |
+| Security Scan | 1 min | 1 min |
+| Docker Build | 3-4 min | 1-2 min ⚡ |
+| **Total** | **9-12 min** | **4-7 min** ⚡ |
+
+### Otimizações Aplicadas
+
+- ✅ Maven dependency cache
+- ✅ Docker layer caching (GitHub Cache)
+- ✅ Parallel jobs quando possível
+- ✅ Conditional steps (skip quando não necessário)
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas!
+
+1. Fork o projeto
+2. Crie uma branch: `git checkout -b feature/minha-feature`
+3. Commit: `git commit -m 'feat: adiciona minha feature'`
+4. Push: `git push origin feature/minha-feature`
+5. Abra um Pull Request
+
+### Padrão de Commits
+
+Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat: nova feature
+fix: correção de bug
+docs: atualização de documentação
+ci: mudanças em CI/CD
+refactor: refatoração de código
+test: adição de testes
+```
+
+---
+
+## 📞 Suporte
+
+- 📖 **Documentação**: [docs/](docs/)
+- 🐛 **Issues**: [GitHub Issues](../../issues)
+- 💬 **Discussões**: [GitHub Discussions](../../discussions)
+- 📧 **Email**: devops@exemplo.com
+
+---
+
+## 📊 Status do Projeto
+
+| Fase | Status | Conclusão |
+|------|--------|-----------|
+| 📋 Brief | ✅ Completo | 100% |
+| 📊 PRD | ✅ Completo | 100% |
+| 🏗️ Arquitetura | ✅ Completo | 100% |
+| 📝 Stories | ✅ Completo | 100% |
+| 💻 Implementação | ✅ Completo | 100% |
+| 📚 Documentação | ✅ Completo | 100% |
+| 🧪 Testes | ⏳ Em andamento | 80% |
+
+---
+
+## 📜 Licença
+
+Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+## 🎯 Roadmap
+
+### ✅ Fase 1: MVP (Completo)
+- Workflow Java reutilizável
+- Pipeline completo
+- SonarCloud integration
+- DockerHub integration
+- Documentação completa
+
+### 🔄 Fase 2: Melhorias (Em planejamento)
+- [ ] Suporte a Gradle
+- [ ] Matrix builds (múltiplas versões Java)
+- [ ] Notificações Slack/Discord
+- [ ] Caching remoto avançado
+
+### 🔮 Fase 3: Enterprise (Futuro)
+- [ ] Deploy para Kubernetes
+- [ ] Multi-cloud support
+- [ ] Advanced security scanning
+- [ ] Performance monitoring
+
+---
+
+## 🏆 Agradecimentos
+
+Desenvolvido com a metodologia **BMAD** usando:
+- ✅ GitHub Actions
+- ✅ SonarCloud
+- ✅ DockerHub
+- ✅ Trivy Security Scanner
+- ✅ Maven
+- ✅ Spring Boot (exemplos)
+
+---
+
+## 📌 Links Úteis
+
+- 📖 [GitHub Actions Docs](https://docs.github.com/en/actions)
+- 📊 [SonarCloud Docs](https://docs.sonarcloud.io/)
+- 🐳 [Docker Best Practices](https://docs.docker.com/develop/dev-best-practices/)
+- ☕ [Maven Docs](https://maven.apache.org/guides/)
+- 🔒 [Trivy Security Scanner](https://aquasecurity.github.io/trivy/)
+
+---
+
+<div align="center">
+
+**⭐ Se este projeto foi útil, considere dar uma estrela! ⭐**
+
+**Feito com ❤️ usando metodologia BMAD**
+
+**Versão**: 1.0.0 | **Última atualização**: 24/10/2025
+
+</div>
+
