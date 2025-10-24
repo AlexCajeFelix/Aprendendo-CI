@@ -147,8 +147,8 @@ jobs:
           context: .
           push: false
           tags: |
-            ${{ github.event.repository.name }}:${{ github.sha }}
-            ${{ github.event.repository.name }}:latest
+            aprendendo-ci:${{ github.sha }}
+            aprendendo-ci:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       
