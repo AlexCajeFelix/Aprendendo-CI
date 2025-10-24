@@ -140,7 +140,7 @@ jobs:
       - name: 📦 Download JAR artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.build-and-test.outputs.artifact-name }}
+          name: application-jar-${{ github.sha }}
           path: target/
       
       - name: 🐳 Set up Docker Buildx
@@ -182,7 +182,7 @@ jobs:
       - name: 📦 Download JAR artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.build-and-test.outputs.artifact-name }}
+          name: application-jar-${{ github.sha }}
           path: target/
       
       - name: 🐳 Set up Docker Buildx
@@ -198,11 +198,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/aprendendo-ci
+          images: aprendendo-ci
           tags: |
             type=raw,value=latest
             type=sha,prefix=main-
-            type=raw,value=${{ needs.build-and-test.outputs.jar-version }}
+            type=raw,value=1.0.0
       
       - name: 🚀 Build and Push Docker image
         uses: docker/build-push-action@v5
@@ -217,8 +217,8 @@ jobs:
       - name: ✅ Deployment successful
         run: |
           echo "✅ Docker image pushed to DockerHub"
-          echo "🐳 Repository: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}"
-          echo "🏷️  Tags: latest, ${{ github.sha }}, ${{ needs.build-and-test.outputs.jar-version }}"
+          echo "🐳 Repository: aprendendo-ci"
+          echo "🏷️  Tags: latest, ${{ github.sha }}, 1.0.0"
   
   # ============================================
   # JOB 6: Pipeline Summary
@@ -253,7 +253,7 @@ jobs:
           | **Branch** | ${{ github.ref_name }} |
           | **Commit** | ${{ github.sha }} |
           | **Actor** | ${{ github.actor }} |
-          | **Artifact** | ${{ needs.build-and-test.outputs.artifact-name }} |
+          | **Artifact** | application-jar-${{ github.sha }} |
           
           ## Quick Links
           
