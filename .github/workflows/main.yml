@@ -4,73 +4,49 @@ on:
   push:
     branches:
       - main
-      - master
-    paths:
-      - 'src/**'
-      - 'pom.xml'
-      - 'Dockerfile'
-      - '.github/workflows/**'
   pull_request:
     branches:
       - main
-      - master
-  workflow_dispatch:
-    inputs:
-      skip-tests:
-        description: 'Skip tests'
-        required: false
-        type: boolean
-        default: false
-      skip-docker:
-        description: 'Skip Docker build'
-        required: false
-        type: boolean
-        default: false
-
 permissions:
   contents: read
   security-events: write
   actions: read
-
-env:
-  JAVA_VERSION: '21'
-  MAVEN_OPTS: '-Xmx3072m'
-
+  id-token: write
+  packages: write
+  discussions: write
+  issues: write
+  pull-requests: write
+  repository-projects: write
+  
 jobs:
-  # ============================================
-  # JOB 1: Build & Test (Chama workflow reutilizável)
-  # ============================================
   build-and-test:
-    name: 🏗️ Build & Test
+    name: 🏗️ Build and Test
     uses: ./.github/workflows/java-reusable.yml
     with:
       java-version: '21'
       maven-args: 'clean install'
-      skip-tests: ${{ github.event.inputs.skip-tests == 'true' }}
+      skip-tests: false
       upload-artifacts: true
   
-  # ============================================
-  # JOB 2: SonarCloud Quality Analysis
-  # ============================================
   sonar-analysis:
-    name: 📊 SonarCloud Analysis
+    name: 📊 Analyze with SonarCloud 
     runs-on: ubuntu-latest
     needs: [build-and-test]
     if: always() && needs.build-and-test.result == 'success'
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for better analysis
-      
+          fetch-depth: 0 
+
       - name: ☕ Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-      
+
       - name: 📊 Run SonarCloud Scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,25 +54,15 @@ jobs:
         run: |
           echo "🔍 Running SonarCloud analysis..."
           mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=AlexCajeFelix_Aprendendo-CI \
-            -Dsonar.organization=alexcajefelix \
+
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
       
-      - name: ✅ Quality Gate Check
-        run: |
-          echo "✅ SonarCloud analysis completed"
-          echo "📊 View results: https://sonarcloud.io/dashboard?id=AlexCajeFelix_Aprendendo-CI"
-  
-  # ============================================
-  # JOB 3: Security Scan
-  # ============================================
   security-scan:
     name: 🔒 Security Scan
     runs-on: ubuntu-latest
     needs: [build-and-test]
     if: always() && needs.build-and-test.result == 'success'
-    
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -120,19 +86,11 @@ jobs:
         run: |
           echo "✅ Security scan completed"
           echo "🔒 View results in: Security → Code scanning alerts"
-  
-  # ============================================
-  # JOB 4: Docker Build
-  # ============================================
+
   docker-build:
     name: 🐳 Docker Build
     runs-on: ubuntu-latest
     needs: [build-and-test, sonar-analysis, security-scan]
-    if: |
-      always() && 
-      needs.build-and-test.result == 'success' &&
-      github.event.inputs.skip-docker != 'true'
-    
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -162,9 +120,6 @@ jobs:
           echo "✅ Docker image built successfully"
           echo "🏷️  Tags: latest, ${{ github.sha }}"
   
-  # ============================================
-  # JOB 5: Docker Push (Somente em main/master)
-  # ============================================
   docker-push:
     name: 🚀 Docker Push
     runs-on: ubuntu-latest
@@ -172,8 +127,7 @@ jobs:
     if: |
       always() &&
       needs.docker-build.result == 'success' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
-      github.event_name == 'push'
+      (github.ref == 'refs/heads/main' )
     
     steps:
       - name: 📥 Checkout code
@@ -220,10 +174,7 @@ jobs:
           echo "🐳 Repository: ${{ secrets.DOCKERHUB_USERNAME }}/aprendendo-ci"
           echo "🏷️  Tags: latest, ${{ github.sha }}, 1.0.0"
           echo "📦 View at: https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/aprendendo-ci"
-  
-  # ============================================
-  # JOB 6: Pipeline Summary
-  # ============================================
+
   summary:
     name: 📋 Pipeline Summary
     runs-on: ubuntu-latest
