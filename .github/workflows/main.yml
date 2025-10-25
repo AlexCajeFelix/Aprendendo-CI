@@ -166,10 +166,16 @@ jobs:
   # JOB 5: Docker Push (Somente em main/master)
   # ============================================
   docker-push:
-    name: 🚀 Docker Push (Disabled - Configure Secrets)
+    name: 🚀 Docker Push
     runs-on: ubuntu-latest
     needs: [build-and-test, docker-build]
-    if: false  # Disabled until secrets are configured
+    if: |
+      always() &&
+      needs.docker-build.result == 'success' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      github.event_name == 'push' &&
+      secrets.DOCKERHUB_USERNAME != '' &&
+      secrets.DOCKERHUB_TOKEN != ''
     
     steps:
       - name: 📥 Checkout code
@@ -239,7 +245,7 @@ jobs:
           | 📊 SonarCloud | ${{ needs.sonar-analysis.result }} | Code quality analysis |
           | 🔒 Security Scan | ${{ needs.security-scan.result }} | Trivy vulnerability scan |
           | 🐳 Docker Build | ${{ needs.docker-build.result }} | Container image |
-          | 🚀 Docker Push | ${{ needs.docker-push.result }} | Disabled (configure secrets) |
+          | 🚀 Docker Push | ${{ needs.docker-push.result }} | ${{ secrets.DOCKERHUB_USERNAME != '' && 'Enabled' || 'Skipped (no secrets)' }} |
           
           ## Build Information
           
@@ -251,11 +257,19 @@ jobs:
           | **Actor** | ${{ github.actor }} |
           | **Artifact** | application-jar-${{ github.sha }} |
           
+          ## Configuration Status
+          
+          | Service | Status | Action |
+          |---------|--------|--------|
+          | **DockerHub** | ${{ secrets.DOCKERHUB_USERNAME != '' && '✅ Configured' || '❌ Not configured' }} | ${{ secrets.DOCKERHUB_USERNAME == '' && 'Add DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets' || 'Ready for push' }} |
+          | **SonarCloud** | ${{ secrets.SONAR_TOKEN != '' && '✅ Configured' || '❌ Not configured' }} | ${{ secrets.SONAR_TOKEN == '' && 'Add SONAR_TOKEN secret' || 'Ready for analysis' }} |
+          
           ## Quick Links
           
-          - 📊 [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=AlexCajeFelix_Aprendendo-CI)
           - 🔒 [Security Alerts](https://github.com/${{ github.repository }}/security/code-scanning)
-          - 🐳 [DockerHub Repository](https://hub.docker.com/r/alexcaje/aprendendo-ci)
+          - 📋 [Setup Instructions](./SETUP-SECRETS.md)
+          ${{ secrets.SONAR_TOKEN != '' && '- 📊 [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=AlexCajeFelix_Aprendendo-CI)' || '' }}
+          ${{ secrets.DOCKERHUB_USERNAME != '' && '- 🐳 [DockerHub Repository](https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/aprendendo-ci)' || '' }}
           
           ---
           ⏱️ Pipeline completed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
