@@ -19,7 +19,9 @@
     <description>Demo project for CI/CD with Spring Boot</description>
 
  <properties>
-  <sonar.organization>alexcajefelix</sonar.organization>
+    <sonar.organization>alexcajefelix</sonar.organization>
+    <sonar.projectKey>AlexCajeFelix_Aprendendo-CI</sonar.projectKey>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 </properties>
 
     <dependencies>
