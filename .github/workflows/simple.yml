@@ -1,0 +1,216 @@
+name: Simple CI/CD Pipeline (No DockerHub Required)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'Dockerfile'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: '-Xmx3072m'
+
+jobs:
+  # ============================================
+  # JOB 1: Build & Test
+  # ============================================
+  build-and-test:
+    name: 🏗️ Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: ☕ Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: 🔍 Extract version from pom.xml
+        id: version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Project version: $VERSION"
+      
+      - name: 🏗️ Build with Maven
+        run: |
+          echo "🚀 Building with Maven..."
+          mvn clean install -B -V
+          echo "✅ Build completed successfully"
+      
+      - name: 🧪 Run Tests
+        run: |
+          echo "🧪 Running tests..."
+          mvn test -B
+          echo "✅ Tests completed"
+      
+      - name: 📊 Generate Coverage Report
+        run: |
+          echo "📊 Generating Jacoco coverage report..."
+          mvn jacoco:report
+          
+          # Extract coverage percentage
+          if [ -f target/site/jacoco/index.html ]; then
+            COVERAGE=$(grep -oP 'Total.*?([0-9]+)%' target/site/jacoco/index.html | grep -oP '[0-9]+' | head -1)
+            echo "📊 Code Coverage: ${COVERAGE:-N/A}%"
+          fi
+      
+      - name: 📦 Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-jar-${{ github.sha }}
+          path: target/*.jar
+          retention-days: 30
+  
+  # ============================================
+  # JOB 2: Security Scan
+  # ============================================
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: always() && needs.build-and-test.result == 'success'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+      
+      - name: 📤 Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: 📋 Security Summary
+        run: |
+          echo "✅ Security scan completed"
+          echo "🔒 View results in: Security → Code scanning alerts"
+  
+  # ============================================
+  # JOB 3: Docker Build (Local Only)
+  # ============================================
+  docker-build:
+    name: 🐳 Docker Build (Local)
+    runs-on: ubuntu-latest
+    needs: [build-and-test, security-scan]
+    if: always() && needs.build-and-test.result == 'success'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 📦 Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: application-jar-${{ github.sha }}
+          path: target/
+      
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: 🏗️ Build Docker image (Local Only)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: |
+            aprendendo-ci:local-test
+            aprendendo-ci:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: ✅ Docker build successful
+        run: |
+          echo "✅ Docker image built successfully (local only)"
+          echo "🏷️  Tags: local-test, ${{ github.sha }}"
+          echo "📝 Note: Image not pushed to registry"
+  
+  # ============================================
+  # JOB 4: Pipeline Summary
+  # ============================================
+  summary:
+    name: 📋 Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [build-and-test, security-scan, docker-build]
+    if: always()
+    
+    steps:
+      - name: 📊 Generate Pipeline Summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          # 🚀 Simple CI/CD Pipeline Summary
+          
+          ## Pipeline Results
+          
+          | Stage | Status | Details |
+          |-------|--------|---------|
+          | 🏗️ Build & Test | ${{ needs.build-and-test.result }} | Java ${{ env.JAVA_VERSION }}, Maven |
+          | 🔒 Security Scan | ${{ needs.security-scan.result }} | Trivy vulnerability scan |
+          | 🐳 Docker Build | ${{ needs.docker-build.result }} | Local build only |
+          
+          ## Build Information
+          
+          | Item | Value |
+          |------|-------|
+          | **Trigger** | ${{ github.event_name }} |
+          | **Branch** | ${{ github.ref_name }} |
+          | **Commit** | ${{ github.sha }} |
+          | **Actor** | ${{ github.actor }} |
+          | **Artifact** | application-jar-${{ github.sha }} |
+          
+          ## ✅ Success!
+          
+          This pipeline works without requiring DockerHub or SonarCloud secrets.
+          
+          To enable full features:
+          1. Configure DockerHub secrets (\`DOCKERHUB_USERNAME\`, \`DOCKERHUB_TOKEN\`)
+          2. Configure SonarCloud secret (\`SONAR_TOKEN\`)
+          3. Use the main workflow (\`main.yml\`)
+          
+          ## Quick Links
+          
+          - 🔒 [Security Alerts](https://github.com/${{ github.repository }}/security/code-scanning)
+          - 📋 [Setup Instructions](./SETUP-SECRETS.md)
+          
+          ---
+          ⏱️ Pipeline completed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
+      
+      - name: 🎉 Pipeline Status
+        run: |
+          if [[ "${{ needs.build-and-test.result }}" == "success" ]]; then
+            echo "✅ Simple pipeline completed successfully!"
+            echo "📝 Configure secrets to use full pipeline with DockerHub and SonarCloud"
+          else
+            echo "❌ Pipeline failed. Check logs above."
+            exit 1
+          fi
