@@ -1,4 +1,5 @@
 name: Java CI Reusable Workflow
+# Test commit
 
 on:
   workflow_call:
